@@ -5,6 +5,7 @@ import { useState } from "react";
 function App() {
   let [guess, setGuess] = useState([]);
   let [currentGuess, setCurrentGuess] = useState([]);
+  let [successMsg, setSuccessMsg] = useState("");
 
   async function submitGuess() {
     let result = await fetch(`http://localhost:3001/play/${guess}`, {
@@ -12,10 +13,10 @@ function App() {
     });
     result = await result.json();
     if (result.correctGuess) {
-      console.log(result);
-
       setCurrentGuess(result.currentWord);
-      console.log(currentGuess);
+      if (result.success) {
+        setSuccessMsg("You Win! Guess Again to Start a New Game");
+      }
     }
   }
 
@@ -24,7 +25,8 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1 style={{ letterSpacing: "1rem" }}>{currentGuess.join("")}</h1>
+        <h1>Guess a letter to begin!</h1>
+        <h3 style={{ letterSpacing: "1rem" }}>{currentGuess.join("")}</h3>
 
         <input
           onChange={(e) => setGuess(e.target.value)}
@@ -35,7 +37,7 @@ function App() {
         />
         <button onClick={submitGuess}>Guess</button>
 
-        <p>Guess a correct letter to fill in the word.</p>
+        <p>{successMsg}</p>
       </header>
     </div>
   );
