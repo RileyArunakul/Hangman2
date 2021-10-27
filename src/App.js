@@ -3,8 +3,8 @@ import "./App.css";
 import { useState } from "react";
 import io from "socket.io-client";
 const socket = io("http://localhost:3001");
-
-socket.emit("new-guess", "abc");
+const playerId = Date.now();
+//socket.emit("new-guess", "abc");
 
 function App() {
   let [guess, setGuess] = useState([]);
@@ -14,9 +14,12 @@ function App() {
     await fetchGuess();
   });
   async function submitGuess() {
-    let result = await fetch(`http://localhost:3001/play/${guess}`, {
-      method: "POST",
-    });
+    let result = await fetch(
+      `http://localhost:3001/play/${playerId}/${guess}`,
+      {
+        method: "POST",
+      }
+    );
   }
   async function fetchGuess() {
     let result = await fetch(`http://localhost:3001/play`, {
@@ -37,6 +40,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <h4>Player ID: {playerId}</h4>
         <h1>Guess a letter to begin!</h1>
         <h3 style={{ letterSpacing: "1rem" }}>{currentGuess.join("")}</h3>
 
