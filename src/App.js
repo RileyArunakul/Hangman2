@@ -1,25 +1,37 @@
 // import logo from './logo.svg';
 import "./App.css";
 import { useState } from "react";
+import io from "socket.io-client";
+const socket = io("http://localhost:3001");
+
+socket.emit("new-guess", "abc");
 
 function App() {
   let [guess, setGuess] = useState([]);
   let [currentGuess, setCurrentGuess] = useState([]);
   let [successMsg, setSuccessMsg] = useState("");
-
+  socket.on("new-guess", async function (data) {
+    await fetchGuess();
+  });
   async function submitGuess() {
     let result = await fetch(`http://localhost:3001/play/${guess}`, {
       method: "POST",
     });
+  }
+  async function fetchGuess() {
+    let result = await fetch(`http://localhost:3001/play`, {
+      method: "GET",
+    });
+
     result = await result.json();
     if (result.correctGuess) {
+      console.log(result);
       setCurrentGuess(result.currentWord);
       if (result.success) {
         setSuccessMsg("You Win! Guess Again to Start a New Game");
       }
     }
   }
-
   // _ e _
 
   return (
